@@ -62,7 +62,7 @@
   </div> 
  
   <div>
-     <button type="submit" name="submit" value="Register" v-on:click="register" class="btn btn-info">Register</button> &nbsp;
+     <button type="submit" name="submit" value="Register" class="btn btn-info">Register</button> &nbsp;
       <router-link to="/login" class="btn btn-info">Login</router-link>
   </div>
 </form>
@@ -142,14 +142,17 @@ export default {
       if(this.errors.length>0)
       {
         event.preventDefault();
+        return false;
+      }else{
+      this.register();
       }
     
     }//handleSubmit
     ,
 
-    async register()
+    register()
     {
-      let res = await axios.post('http://103.67.191.89/lv/starfan/api/v1/user-registration',{
+      let res = axios.post('http://103.67.191.89/lv/starfan/api/v1/user-registration',{
           first_name:this.first_name,
           last_name : this.last_name,
           email:this.email,

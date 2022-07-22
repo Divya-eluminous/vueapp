@@ -3,7 +3,7 @@
 <ul>
    <li v-for="errs in errors" :key="errs"> 
       {{ errs }} 
-   </li>
+   </li><br/>
 </ul>
 
 
@@ -19,7 +19,7 @@
   </div> 
 
   <div>
-     <button type="submit" name="submit" value="Register" v-on:click="login" class="btn btn-info">Login</button> &nbsp;
+     <button type="submit" name="submit" value="Register"  class="btn btn-info">Login</button> &nbsp;
      <router-link to="/signup" class="btn btn-info">Signup</router-link> 
   </div>
 </form>
@@ -40,7 +40,8 @@ export default {
     return {
        errors:this.errors,
        email:null,
-       password:null
+       password:null,
+       tok:null
      }
   },
    beforeMount(){    
@@ -67,11 +68,19 @@ export default {
         this.errors.push("Please enter password");
       }
       console.log(this.errors.length);
-      event.preventDefault();
+     
+      if(this.errors.length>0)
+      {
+       event.preventDefault();
+       return false;
+      }
+      else{
+        this.login();
+      }
     },
-   async login()
+    login()
     { 
-       let res = await axios.post('http://103.67.191.89/lv/starfan/api/v1/login',{
+       let res = axios.post('http://103.67.191.89/lv/starfan/api/v1/login',{
         email:this.email,
         password:this.password,
         fcm_token:'sdsd'
@@ -79,10 +88,13 @@ export default {
        console.log(res);  
       if(res.data.status==true)
       {
-        localStorage.setItem('AccessToken',res.data.data.api_access_token);
+        this.tok = res.data.data.api_access_token.split("Bearer ");
+       
+       // localStorage.setItem('AccessToken',res.data.data.api_access_token);
+       localStorage.setItem('AccessToken',this.tok);
         localStorage.setItem('LoginData',JSON.stringify(res.data.data));
        
-         this.$router.push("/");
+         //this.$router.push("/");
       }
       else{
         this.errors = res.errors;

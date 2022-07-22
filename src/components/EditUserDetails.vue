@@ -71,9 +71,9 @@ export default {
   mounted()
   {
       var res = JSON.parse(localStorage.getItem('LoginData'));
-      var accessToken = localStorage.getItem('AccessToken');
+      var accessToken = 'Bearer ' +localStorage.getItem('AccessToken').split(",");
       if(res){   
-      console.log(res.data);   
+       console.log(res.data);   
        this.id = res.id;
        this.first_name = res.first_name;
        this.last_name = res.last_name;
@@ -89,15 +89,15 @@ export default {
     handleSubmit(event)
     {
       this.errors=[];
-      if(this.first_name=="")
+      if(!this.first_name)
       {
         this.errors.push('Please enter first name');
       }
-      if(this.last_name=="")
+      if(!this.last_name)
       {
         this.errors.push('Please enter last name');
       }     
-      if(this.contact=="")
+      if(!this.contact)
       {
         this.errors.push('Please enter contact number');
       }
@@ -112,6 +112,7 @@ export default {
 
     async update()
     {
+      alert(this.accestoken);
       let res = await axios.post('http://localhost/starfan/api/v1/edit-user-details',{
           id:this.id,
           first_name:this.first_name,
@@ -119,24 +120,10 @@ export default {
           email:this.email,
           dob:this.dob,
           contact:this.contact,
-      },{'headers':{'Authorization':this.accestoken}} );
+      }, {headers:{'Authorization':this.accestoken,"Content-Type":"application/json"}});
+     
       console.log(res);
-
-      if(res.status==false)
-      {
-        this.errors = res.data.errors;
-      }
-      else{     
-        localStorage.removeItem('LoginData')
-        console.log(res.data.data);
-          if (localStorage.getItem("LoginData") === null) {
-            console.log('not have localstorage data');
-            //localStorage.setItem("LoginData",JSON.stringify(res.data));
-          }else{
-            alert(this.accestoken);
-          }
-      }
-
+      
 
     }//register
     ,
